@@ -6,9 +6,21 @@ import keystatic from '@keystatic/astro';
 
 import tailwind from "@astrojs/tailwind";
 
+let integrations = [];
+let output = '';
+
+console.log('SKIP_KEYSTATIC :' + process.env.SKIP_KEYSTATIC);
+
+if(process.env.SKIP_KEYSTATIC == 'true') {
+  integrations =  [react(), markdoc(), tailwind()];
+  output = 'static';
+} else {
+  integrations =  [react(), markdoc(), tailwind(), keystatic()];
+  output = 'hybrid'
+}
 
 // https://astro.build/config
 export default defineConfig({
-  integrations: [react(), markdoc(), tailwind(), ...(process.env.SKIP_KEYSTATIC  ? [keystatic()] : [])],
-  output: (process.env.SKIP_KEYSTATIC ? 'hybrid': 'static')
+  integrations: integrations,
+  output: output
 }); 
