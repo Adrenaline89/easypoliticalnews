@@ -65,6 +65,13 @@ post_receive hook
 - GitHub repo
 - CloudFlare
 
+## Deployment
+- push to DO server (origin)
+- goto depoyed maketree dir
+- push to github
+- cloudflare will watch for github repo changes on main branch
+- cloudflare will buils for pages
+
 ### Prerequisites
 
 Before you begin, ensure you have the following installed:
