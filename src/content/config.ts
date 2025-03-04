@@ -13,4 +13,25 @@ const posts = defineCollection({
   }),
 });
 
-export const collections = { posts };
+const news = defineCollection({
+  schema: z.object({
+    title: z.string(),
+    date: z.string(),
+    distraction: z.object({
+      title: z.string(),
+      author: z.string(),
+      datetime: z.string(),
+      link: z.string().url(),
+      publication: z.string(),
+    }),
+    important: z.object({
+      title: z.string(),
+      author: z.string(),
+      datetime: z.string(),
+      link: z.string().url(),
+      publication: z.string(),
+    }),
+  }),
+});
+
+export const collections = { posts, news };

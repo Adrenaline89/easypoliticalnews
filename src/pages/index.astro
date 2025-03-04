@@ -1,15 +1,58 @@
 ---
-import { getCollection, getEntry } from 'astro:content';
-import Layout from '../layouts/Layout.astro'; 
-import Hero from 'src/components/Hero.astro';
-import { Image } from 'astro:assets';
-import Posts from '@components/Posts.astro';
 
-const posts = await getCollection('posts');
+import { getCollection, getEntry } from 'astro:content';
+
+const newsEntries = await getCollection("news");
 ---
 
-<Layout title="Keystatic & Astro's Content Collections">
-  <Hero />
-  <Posts />
-</Layout>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>News Table</title>
+</head>
+<body class="bg-gray-100 p-8">
+  <div class="container mx-auto">
+    <h1 class="text-3xl font-bold text-center mb-6">News Table</h1>
 
+    <div class="overflow-x-auto bg-white shadow-md rounded-lg p-4">
+      <table class="w-full border-collapse border border-gray-300">
+        <thead>
+          <tr class="bg-gray-200 text-gray-800">
+            <th class="border border-gray-300 px-4 py-2 text-left w-1/2">Distraction</th>
+            <th class="border border-gray-300 px-4 py-2 text-left w-1/2">Important</th>
+          </tr>
+        </thead>
+        <tbody>
+          {newsEntries.map((entry: any) => (
+            <tr class="border border-gray-300">
+              {/* Distraction Column */}
+              <td class="border border-gray-300 px-4 py-2">
+                <div>
+                  <a href={entry.data.distraction.link} class="text-blue-600 font-semibold hover:underline">
+                    {entry.data.distraction.title}
+                  </a>
+                  <p class="text-gray-600 text-sm">by {entry.data.distraction.author} - {new Date(entry.data.distraction.datetime).toLocaleString()}</p>
+                  <p class="text-gray-500 text-xs italic">{entry.data.distraction.publication}</p>
+                </div>
+              </td>
+
+              {/* Important Column */}
+              <td class="border border-gray-300 px-4 py-2">
+                <div>
+                  <a href={entry.data.important.link} class="text-blue-600 font-semibold hover:underline">
+                    {entry.data.important.title}
+                  </a>
+                  <p class="text-gray-600 text-sm">by {entry.data.important.author} - {new Date(entry.data.important.datetime).toLocaleString()}</p>
+                  <p class="text-gray-500 text-xs italic">{entry.data.important.publication}</p>
+                </div>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</body>
+</html>

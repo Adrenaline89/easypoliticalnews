@@ -1,0 +1,15 @@
+---
+import { getCollection, getEntry } from 'astro:content';
+import Layout from '../layouts/Layout.astro'; 
+import Hero from 'src/components/Hero.astro';
+import { Image } from 'astro:assets';
+import Posts from '@components/Posts.astro';
+
+const posts = await getCollection('posts');
+---
+
+<Layout title="Keystatic & Astro's Content Collections">
+  <Hero />
+  <Posts />
+</Layout>
+
