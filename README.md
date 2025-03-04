@@ -18,7 +18,52 @@ Welcome to your new project! This starter template is built using Astro, Keystat
 - **Tailwind CSS**: Rapidly build and style your site with Tailwind CSS.
 - **DaisyUI**: Use beautiful, pre-designed components with DaisyUI.
 
+
+## Server
+- make bare git
+- add post_receive hook
+- export keys :
+```
+export PERIGON_API_KEY=abc123
+export OPENAI_API_KEY=abc123
+```
+
+
+## Node setup
+```
+curl -fsSL https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.4/install.sh | bash
+
+nvm install node
+nvm use 23.9.0
+
+npm install -g typescript ts-node
+
+```
+
+## GIT Setup
+```
+git config --bool core.bare true
+
+DO server
+git remote add origin ssh://myuser@1.2.3.4:/home/myuser/repos/easypoliticalnews.git
+
+GitHub
+git remote add gh git@github.com:Adrenaline89/easypoliticalnews.git
+cd /home/pjebreo/repos/easypoliticalnews.git
+
+
+post_receive hook
+/home/myuser/repos/easypoliticalnews.git/.git/hooks
+```
+
+
 ## Installation
+
+### Materials
+- local machine
+- DO droplet - remote repo should be bare. create worktree
+- GitHub repo
+- CloudFlare
 
 ### Prerequisites
 
