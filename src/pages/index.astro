@@ -10,8 +10,69 @@ const newsEntries = await getCollection("news");
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Easy Political News</title>
+</head>---
+import { getCollection } from "astro:content";
+
+const newsEntries = await getCollection("news");
+---
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>News Table</title>
 </head>
+<body class="bg-gray-100 p-8">
+  <div class="container mx-auto">
+    <h1 class="text-3xl font-bold text-center mb-6">News Table</h1>
+
+    <div class="overflow-x-auto bg-white shadow-md rounded-lg p-4">
+      <table class="w-full border-collapse border border-gray-300">
+        <thead>
+          <tr class="bg-gray-200 text-gray-800">
+            <th class="border border-gray-300 px-4 py-2 text-left w-1/2">Distraction</th>
+            <th class="border border-gray-300 px-4 py-2 text-left w-1/2">Important</th>
+          </tr>
+        </thead>
+        <tbody>
+          {newsEntries.map((entry) => (
+            <tr class="border border-gray-300">
+              {/* Distraction Column */}
+              <td class="border border-gray-300 px-4 py-2">
+                {entry.data.distraction.map((story) => (
+                  <div class="mb-2">
+                    <a href={story.link} class="text-blue-600 font-semibold hover:underline">
+                      {story.title}
+                    </a>
+                    <p class="text-gray-600 text-sm">by {story.author} - {new Date(story.datetime).toLocaleString()}</p>
+                    <p class="text-gray-500 text-xs italic">{story.publication}</p>
+                  </div>
+                ))}
+              </td>
+
+              {/* Important Column */}
+              <td class="border border-gray-300 px-4 py-2">
+                {entry.data.important.map((story) => (
+                  <div class="mb-2">
+                    <a href={story.link} class="text-blue-600 font-semibold hover:underline">
+                      {story.title}
+                    </a>
+                    <p class="text-gray-600 text-sm">by {story.author} - {new Date(story.datetime).toLocaleString()}</p>
+                    <p class="text-gray-500 text-xs italic">{story.publication}</p>
+                  </div>
+                ))}
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</body>
+</html>
+
 <body class="bg-gray-100 p-8">
   <div class="container mx-auto">
     <h1 class="text-3xl font-bold text-center mb-6">News Table</h1>

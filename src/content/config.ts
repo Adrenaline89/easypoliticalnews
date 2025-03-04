@@ -16,22 +16,30 @@ const posts = defineCollection({
 const news = defineCollection({
   schema: z.object({
     title: z.string(),
-    date: z.string(),
-    distraction: z.object({
-      title: z.string(),
-      author: z.string(),
-      datetime: z.string(),
-      link: z.string().url(),
-      publication: z.string(),
-    }),
-    important: z.object({
-      title: z.string(),
-      author: z.string(),
-      datetime: z.string(),
-      link: z.string().url(),
-      publication: z.string(),
-    }),
+    date: z.string(), // ✅ Kept as `string` since it's a date string
+
+    // ✅ Refactored to correctly validate an array of news items
+    distraction: z.array(
+      z.object({
+        title: z.string(),
+        author: z.string(),
+        datetime: z.string(), // Keeping it as a string for ISO format
+        link: z.string().url(),
+        publication: z.string(),
+      })
+    ),
+
+    important: z.array(
+      z.object({
+        title: z.string(),
+        author: z.string(),
+        datetime: z.string(),
+        link: z.string().url(),
+        publication: z.string(),
+      })
+    ),
   }),
 });
+
 
 export const collections = { posts, news };

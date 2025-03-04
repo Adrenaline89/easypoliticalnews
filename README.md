@@ -160,3 +160,69 @@ yarn preview
 └── README.md               # Project documentation
 ```
 
+
+## News JSON
+```
+data = {
+    "table": {
+        "headers": ["Distraction", "Important"],
+        "rows": [
+            {
+                "Distraction": [
+                    {
+                    "Title": "Understanding AI",
+                    "Author": "John Doe",
+                    "DateTime": "2025-03-01T12:00:00Z",
+                    "Link": "https://example.com/understanding-ai",
+                    "Publication": "Tech Weekly"
+                    }
+                ]
+                "Important": [
+                    {
+                    "Title": "Quantum Computing Breakthrough",
+                    "Author": "Jane Smith",
+                    "DateTime": "2025-03-01T14:30:00Z",
+                    "Link": "https://example.com/quantum-computing",
+                    "Publication": "Science Daily"
+                    },
+                    {
+                    "Title": "Lorem ipsum",
+                    "Author": "Foo Bar",
+                    "DateTime": "2025-03-01T14:30:00Z",
+                    "Link": "https://example.com/quantum-computing",
+                    "Publication": "Science Daily"
+                    }
+                ]
+            },
+            {
+                "Distraction": [
+                    {
+                    "Title": "Web3 and the Future",
+                    "Author": "Alice Johnson",
+                    "DateTime": "2025-03-01T16:45:00Z",
+                    "Link": "https://example.com/web3-future",
+                    "Publication": "Blockchain Insider"
+                    },
+                    {
+                        "Title": "Lorem Ipsum",
+                        "Author": "Alice Johnson",
+                        "DateTime": "2025-03-01T16:45:00Z",
+                        "Link": "https://example.com/web3-future",
+                        "Publication": "Blockchain Insider"
+                    }
+
+                ],
+                "Important": [
+                    {
+                    "Title": "Cybersecurity Trends",
+                    "Author": "Bob Lee",
+                    "DateTime": "2025-03-01T18:10:00Z",
+                    "Link": "https://example.com/cybersecurity-trends",
+                    "Publication": "Security Watch"
+                    }
+                ]
+            }
+        ]
+    }
+}
+```
