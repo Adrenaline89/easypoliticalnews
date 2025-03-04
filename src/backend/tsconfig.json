@@ -1,0 +1,11 @@
+{ "compilerOptions": 
+  { 
+    "esModuleInterop": true, 
+    "allowSyntheticDefaultImports": true, 
+    "resolveJsonModule": true, 
+    "typeRoots": ["./node_modules/@types"], 
+    "baseUrl": "./", 
+    "paths": { 
+      "*": ["node_modules/*"] }
+    } 
+}

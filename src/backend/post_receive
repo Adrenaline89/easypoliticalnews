@@ -1,0 +1,33 @@
+#!/bin/bash
+
+# located  in .git/hooks/
+
+# Set variables
+REPO_PATH="/home/pjebreo/repos/easypoliticalnews.git/.git"    # Path to your bare repo
+WORKTREES_DIR="/home/pjebreo/repos/easypoliticalnews-main"  # Directory to store new worktrees
+BRANCH="main"                         # Change to the branch you want to checkout
+
+
+LOG_FILE="/tmp/post-receive.log"
+
+echo "🚀 Running post-receive at $(date)" >> "$LOG_FILE"
+
+
+# Ensure the worktree directory exists
+mkdir -p "$WORKTREES_DIR"
+
+# Get latest commit hash
+LATEST_COMMIT=$(git rev-parse HEAD)
+
+# Create a unique timestamped worktree directory
+WORKTREE_PATH="$WORKTREES_DIR/deploy-$(date +%Y%m%d-%H%M%S)"
+
+echo "🚀 Creating new worktree at $WORKTREE_PATH..." >> "$LOG_FILE"
+mkdir "$WORKTREE_PATH"
+
+
+# Create a new worktree
+git --git-dir="$REPO_PATH" worktree add "$WORKTREE_PATH"
+echo "✅ Worktree created successfully at $WORKTREE_PATH." >> "$LOG_FILE"
+
+exit 0
