@@ -14,8 +14,10 @@
     "astro": "^4.0.3",
     "daisyui": "^4.12.10",
     "dotenv": "^16.4.7",
+    "open": "^10.1.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "snoowrap": "^1.23.0",
     "tailwindcss": "^3.4.4"
   },
   "scripts": {

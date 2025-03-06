@@ -1,69 +1,107 @@
 ---
+import { getCollection } from "astro:content";
 
-import { getCollection, getEntry } from 'astro:content';
-
-const newsEntries = await getCollection("news");
+const allNewsCollections = await getCollection("news");
+const allNewsArticles = allNewsCollections.flatMap(file => file.data.news);
 ---
 
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Easy Political News</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>News Feed</title>
+  <style>
+    /* Basic styles for better mobile responsiveness */
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f9f9f9;
+    }
+    .container {
+      max-width: 600px;
+      margin: auto;
+      padding: 1rem;
+    }
+    .news-item {
+      background: white;
+      padding: 1rem;
+      margin-bottom: 1rem;
+      border-radius: 8px;
+      box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+    }
+    .headline {
+      font-size: 1.2rem;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+    }
+    .headline::before {
+      content: "🔷";
+      color: darkblue;
+      margin-right: 8px;
+    }
+    .subheadline {
+      display: flex;
+      align-items: center;
+      font-size: 1rem;
+      margin-top: 5px;
+    }
+    .subheadline::before {
+      content: "📌";
+      color: red;
+      margin-right: 6px;
+    }
+    .source {
+      font-size: 0.9rem;
+      color: gray;
+    }
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      background: white;
+      box-shadow: 0px -2px 5px rgba(0, 0, 0, 0.1);
+      display: flex;
+      justify-content: space-around;
+      padding: 10px 0;
+    }
+    .nav-link {
+      text-decoration: none;
+      color: black;
+      font-size: 1rem;
+    }
+  </style>
 </head>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Newsjj Table</title>
-</head>
-<body class="bg-gray-100 p-8">
-  <div class="container mx-auto">
-    <h1 class="text-3xl font-bold text-center mb-6">News Table</h1>
-
-    <div class="overflow-x-auto bg-white shadow-md rounded-lg p-4">
-      <table class="w-full border-collapse border border-gray-300">
-        <thead>
-          <tr class="bg-gray-200 text-gray-800">
-            <th class="border border-gray-300 px-4 py-2 text-left w-1/2">Distraction</th>
-            <th class="border border-gray-300 px-4 py-2 text-left w-1/2">Important</th>
-          </tr>
-        </thead>
-        <tbody>
-          {newsEntries.map((entry) => (
-            <tr class="border border-gray-300">
-              {/* Distraction Column */}
-              <td class="border border-gray-300 px-4 py-2">
-                {entry.data.distraction.map((story) => (
-                  <div class="mb-2">
-                    <a href={story.link} class="text-blue-600 font-semibold hover:underline">
-                      {story.title}
-                    </a>
-                    <p class="text-gray-600 text-sm">by {story.author} - {new Date(story.datetime).toLocaleString()}</p>
-                    <p class="text-gray-500 text-xs italic">{story.publication}</p>
-                  </div>
+<body>
+  <div class="container">
+    {allNewsArticles.map(news => (
+      <div class="news-item">
+        <a href={news.url} class="headline">{news.headline}</a>
+        <p class="source">By {news.authorByline} - {news.publication} - {new Date(news.pubDateTime).toLocaleDateString()}</p>
+        
+        {news.criteria_matches && news.criteria_matches.length > 0 && (
+          <div class="criteria">
+            {news.criteria_matches.map(match => (
+              <div>
+                <div class="subheadline">{match.source}</div>
+                {match.criteria.map(criteria => (
+                  <p class="source">- {criteria}</p>
                 ))}
-              </td>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    ))}
+  </div>
 
-              {/* Important Column */}
-              <td class="border border-gray-300 px-4 py-2">
-                {entry.data.important.map((story) => (
-                  <div class="mb-2">
-                    <a href={story.link} class="text-blue-600 font-semibold hover:underline">
-                      {story.title}
-                    </a>
-                    <p class="text-gray-600 text-sm">by {story.author} - {new Date(story.datetime).toLocaleString()}</p>
-                    <p class="text-gray-500 text-xs italic">{story.publication}</p>
-                  </div>
-                ))}
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
+  <!-- Bottom Navigation -->
+  <div class="bottom-nav">
+    <a href="/" class="nav-link">Home</a>
+    <a href="/news" class="nav-link">News</a>
+    <a href="/blog" class="nav-link">Blog</a>
+    <a href="/about" class="nav-link">About</a>
   </div>
 </body>
 </html>
