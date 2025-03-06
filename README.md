@@ -26,6 +26,10 @@ Welcome to your new project! This starter template is built using Astro, Keystat
 ```
 export PERIGON_API_KEY=abc123
 export OPENAI_API_KEY=abc123
+
+export REDDIT_USER_AGENT=abc123
+export REDDIT_CLIENT_ID=abc123
+export REDDIT_CLIENT_SECRET=abc123
 ```
 
 
@@ -54,6 +58,8 @@ cd /home/pjebreo/repos/easypoliticalnews.git
 
 post_receive hook
 /home/myuser/repos/easypoliticalnews.git/.git/hooks
+
+chmod +x fetch_store_make_markdow.sh
 ```
 
 
