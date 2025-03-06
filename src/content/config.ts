@@ -20,7 +20,7 @@ const newsArticleSchema = z.object({
   authorByline: z.string(),
   url: z.string().url(),
   publication: z.string(),
-  pubDateTime: z.string().datetime(),
+  pubDateTime: z.coerce.date(),
   criteria_matches: z
     .array(
       z.object({
@@ -33,6 +33,7 @@ const newsArticleSchema = z.object({
 
 const newsCollectionSchema = z.object({
   news: z.array(newsArticleSchema),
+  dateTime: z.coerce.date()
 });
 
 const news = defineCollection({
