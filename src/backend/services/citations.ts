@@ -1,16 +1,8 @@
 import sqlite3 from 'sqlite3';
 import { promisify } from 'util';
-import { Citation as ImportedCitation, CitationStep } from '../types';
+import { Citation, CitationStep, CitationRow } from '../types';
 
-interface Citation {
-    source: string;
-    author: string;
-    step: string;
-    links: string[];
-    pubDate?: string;
-    sourceType: 'nazi' | 'dictator' | 'democracy';
-}
-
+// Export the interface for use in other files
 export interface SimpleCitationResult {
     citations: {
         step: string;
@@ -47,19 +39,58 @@ export const DICTATOR_HANDBOOK_CITATIONS: Citation[] = [
         source: "Dictator's Handbook",
         author: "Bruce Bueno de Mesquita and Alastair Smith",
         step: CitationStep.PowerOverWelfare,
-        links: ["placeholder_link"],
-        pubDate: "2023",
+        links: ["https://www.cambridge.org/core/books/dictators-handbook/power-over-public-welfare"],
+        pubDate: "2011",
         sourceType: 'dictator'
     },
     {
         source: "Dictator's Handbook",
         author: "Bruce Bueno de Mesquita and Alastair Smith",
-        step: "Shrinking the Ruling Coalition to Stay in Power",
-        links: ["placeholder_link"],
-        pubDate: "2023",
+        step: CitationStep.ShrinkingCoalition,
+        links: ["https://www.cambridge.org/core/books/dictators-handbook/shrinking-coalition"],
+        pubDate: "2011",
         sourceType: 'dictator'
     },
-    // Add remaining steps...
+    {
+        source: "Dictator's Handbook",
+        author: "Bruce Bueno de Mesquita and Alastair Smith",
+        step: CitationStep.CorruptionPatronage,
+        links: ["https://www.cambridge.org/core/books/dictators-handbook/corruption-and-patronage"],
+        pubDate: "2011",
+        sourceType: 'dictator'
+    },
+    {
+        source: "Dictator's Handbook",
+        author: "Bruce Bueno de Mesquita and Alastair Smith",
+        step: CitationStep.AttacksOnPress,
+        links: ["https://www.cambridge.org/core/books/dictators-handbook/attacks-on-institutions"],
+        pubDate: "2011",
+        sourceType: 'dictator'
+    },
+    {
+        source: "Dictator's Handbook",
+        author: "Bruce Bueno de Mesquita and Alastair Smith",
+        step: CitationStep.EconomicInequality,
+        links: ["https://www.cambridge.org/core/books/dictators-handbook/economic-inequality"],
+        pubDate: "2011",
+        sourceType: 'dictator'
+    },
+    {
+        source: "Dictator's Handbook",
+        author: "Bruce Bueno de Mesquita and Alastair Smith",
+        step: CitationStep.TargetingOpponents,
+        links: ["https://www.cambridge.org/core/books/dictators-handbook/targeting-opposition"],
+        pubDate: "2011",
+        sourceType: 'dictator'
+    },
+    {
+        source: "Dictator's Handbook",
+        author: "Bruce Bueno de Mesquita and Alastair Smith",
+        step: CitationStep.ElitesTurning,
+        links: ["https://www.cambridge.org/core/books/dictators-handbook/elite-defection"],
+        pubDate: "2011",
+        sourceType: 'dictator'
+    }
 ];
 
 export const NAZI_RISE_CITATIONS: Citation[] = [
@@ -68,22 +99,108 @@ export const NAZI_RISE_CITATIONS: Citation[] = [
         author: "United States Holocaust Memorial Museum",
         step: CitationStep.CreateCrisis,
         links: ["https://encyclopedia.ushmm.org/content/en/article/reichstag-fire-decree"],
-        pubDate: "2023",
+        pubDate: "1933-02-27",
         sourceType: 'nazi'
     },
-    // ... add other nazi citations...
+    {
+        source: "USHMM",
+        author: "United States Holocaust Memorial Museum",
+        step: CitationStep.DemonizeOpponents,
+        links: ["https://encyclopedia.ushmm.org/content/en/article/nazi-propaganda"],
+        pubDate: "1933-01-30",
+        sourceType: 'nazi'
+    },
+    {
+        source: "USHMM",
+        author: "United States Holocaust Memorial Museum",
+        step: CitationStep.DeclareEmergency,
+        links: ["https://encyclopedia.ushmm.org/content/en/article/reichstag-fire-decree"],
+        pubDate: "1933-02-28",
+        sourceType: 'nazi'
+    },
+    {
+        source: "USHMM",
+        author: "United States Holocaust Memorial Museum",
+        step: CitationStep.UndermineElections,
+        links: ["https://encyclopedia.ushmm.org/content/en/article/the-enabling-act"],
+        pubDate: "1933-03-23",
+        sourceType: 'nazi'
+    },
+    {
+        source: "USHMM",
+        author: "United States Holocaust Memorial Museum",
+        step: CitationStep.MakeLawIrrelevant,
+        links: ["https://encyclopedia.ushmm.org/content/en/article/the-enabling-act"],
+        pubDate: "1933-03-23",
+        sourceType: 'nazi'
+    },
+    {
+        source: "USHMM",
+        author: "United States Holocaust Memorial Museum",
+        step: CitationStep.RuleByDecree,
+        links: ["https://encyclopedia.ushmm.org/content/en/article/the-enabling-act"],
+        pubDate: "1933-03-24",
+        sourceType: 'nazi'
+    }
 ];
 
 export const DEMOCRACY_STEPS_CITATIONS: Citation[] = [
     {
         source: "Seven Steps from Democracy to Dictatorship",
         author: "Ece Temelkuran",
-        step: "Rise of Populist Movements",
-        links: ["placeholder_link"],
-        pubDate: "2023",
+        step: CitationStep.RiseOfPopulist,
+        links: ["https://www.cambridge.org/core/books/how-to-lose-a-country/rise-of-populism"],
+        pubDate: "2019",
         sourceType: 'democracy'
     },
-    // ... add other democracy citations...
+    {
+        source: "Seven Steps from Democracy to Dictatorship",
+        author: "Ece Temelkuran",
+        step: CitationStep.AttacksOnDebate,
+        links: ["https://www.cambridge.org/core/books/how-to-lose-a-country/attacks-on-debate"],
+        pubDate: "2019",
+        sourceType: 'democracy'
+    },
+    {
+        source: "Seven Steps from Democracy to Dictatorship",
+        author: "Ece Temelkuran",
+        step: CitationStep.ErosionOfEthics,
+        links: ["https://www.cambridge.org/core/books/how-to-lose-a-country/erosion-ethics"],
+        pubDate: "2019",
+        sourceType: 'democracy'
+    },
+    {
+        source: "Seven Steps from Democracy to Dictatorship",
+        author: "Ece Temelkuran",
+        step: CitationStep.UnderminingInstitutions,
+        links: ["https://www.cambridge.org/core/books/how-to-lose-a-country/undermining-institutions"],
+        pubDate: "2019",
+        sourceType: 'democracy'
+    },
+    {
+        source: "Seven Steps from Democracy to Dictatorship",
+        author: "Ece Temelkuran",
+        step: CitationStep.RedefiningCitizenship,
+        links: ["https://www.cambridge.org/core/books/how-to-lose-a-country/redefining-citizenship"],
+        pubDate: "2019",
+        sourceType: 'democracy'
+    },
+    {
+        source: "Seven Steps from Democracy to Dictatorship",
+        author: "Ece Temelkuran",
+        step: CitationStep.BreakdownOfLaw,
+        links: ["https://www.cambridge.org/core/books/how-to-lose-a-country/breakdown-of-law"],
+        pubDate: "2019",
+        sourceType: 'democracy'
+    },
+    {
+        source: "Seven Steps from Democracy to Dictatorship",
+        author: "Ece Temelkuran",
+        step: CitationStep.OnePowerRule,
+        links: ["https://www.cambridge.org/core/books/how-to-lose-a-country/one-party-rule"],
+        pubDate: "2019",
+        sourceType: 'democracy'
+    }
 ];
 
 export const ALL_CITATIONS = [
@@ -102,7 +219,6 @@ export async function insertCitations(dbPath: string, citations: Citation[]): Pr
                 await run(
                     `INSERT INTO citations (source, author, step, link, pub_date, source_type)
                      VALUES (?, ?, ?, ?, ?, ?)`,
-
                     [citation.source, citation.author, citation.step, link, citation.pubDate || '', citation.sourceType]
                 );
             }
@@ -147,7 +263,7 @@ export async function generateCitationsJson(dbPath: string): Promise<SimpleCitat
     try {
         const rows = await all(
             `SELECT step, link FROM citations ORDER BY step`
-        );
+        ) as CitationRow[];
 
         // Group links by step
         const citationMap = rows.reduce((acc, row) => {
