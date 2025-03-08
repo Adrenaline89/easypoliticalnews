@@ -6,7 +6,7 @@ BASE_DIR="/home/pjebreo/repos/easypoliticalnews-main"
 
 # Find the most recent deployment directory based on timestamp in the name
 LATEST_DEPLOY=$(ls -d $BASE_DIR/deploy-* 2>/dev/null | sort -r | head -n 1)
-
+LOG_FILE="/tmp/fetch-store-make-md.log"
 
 # Check if a directory was found
 if [[ -z "$LATEST_DEPLOY" ]]; then

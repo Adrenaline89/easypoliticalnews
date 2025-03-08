@@ -1,11 +1,13 @@
 {
     "dependencies": {
+        "@types/sqlite3": "^3.1.11",
+        "astro": "^5.4.1",
         "axios": "^1.8.1",
         "better-sqlite3": "^11.8.1",
         "dotenv": "^16.4.7",
         "fs-extra": "^11.3.0",
         "openai": "^4.86.1",
-        "astro": "^5.4.1",
+        "sqlite3": "^5.1.7",
         "typescript": "^5.8.2"
     }
 }
