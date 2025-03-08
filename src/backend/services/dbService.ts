@@ -146,14 +146,44 @@ export async function loadCompleteAnnotatedNews(): Promise<CompleteAnnotatedNews
             n.authorByline,
             n.pubDate,
             n.url,
-            m.category,
-            m.match
-        FROM CompleteAnnotatedNews n
-        LEFT JOIN CompleteAnnotatedMatches m ON m.annotated_news_id = n.id
+            n.publication,
+            m.source,
+            m.criteria
+        FROM complete_annotated_news n
+        LEFT JOIN criteria_matches m ON m.annotated_news_id = n.id
         ORDER BY n.created_at DESC
     `);
 
-    // ...rest of loadCompleteAnnotatedNewsFromDb function...
+    const rows = loadStmt.all();
+
+    // Group rows by article
+    const newsMap = rows.reduce((acc, row) => {
+        if (!acc[row.numberedTitle]) {
+            acc[row.numberedTitle] = {
+                title: row.title,
+                numberedTitle: row.numberedTitle,
+                authorByline: row.authorByline,
+                pubDate: row.pubDate,
+                url: row.url,
+                publication: row.publication,
+                criteria_matches: []
+            };
+        }
+        
+        if (row.source && row.criteria) {
+            acc[row.numberedTitle].criteria_matches.push({
+                source: row.source,
+                criteria: [row.criteria]
+            });
+        }
+        
+        return acc;
+    }, {});
+
+    return {
+        news: Object.values(newsMap),
+        dateTime: new Date().toISOString()
+    };
 }
 
 // Move other database-related functions here...
