@@ -68,3 +68,9 @@ export interface Citation {
     pubDate?: string;
     sourceType: 'nazi' | 'dictator' | 'democracy';
 }
+
+// Add interface for database row type
+export interface CitationRow {
+    step: string;
+    link: string;
+}
