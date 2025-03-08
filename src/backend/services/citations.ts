@@ -11,7 +11,7 @@ interface Citation {
     sourceType: 'nazi' | 'dictator' | 'democracy';
 }
 
-interface SimpleCitationResult {
+export interface SimpleCitationResult {
     citations: {
         step: string;
         links: string[];
@@ -102,12 +102,13 @@ export async function insertCitations(dbPath: string, citations: Citation[]): Pr
                 await run(
                     `INSERT INTO citations (source, author, step, link, pub_date, source_type)
                      VALUES (?, ?, ?, ?, ?, ?)`,
+
                     [citation.source, citation.author, citation.step, link, citation.pubDate || '', citation.sourceType]
                 );
             }
         }
     } catch (error) {
-        throw new Error(`Failed to insert citations: ${error}`);
+        throw new Error(`Failed to insert citations: ${error}`); 
     } finally {
         db.close();
     }

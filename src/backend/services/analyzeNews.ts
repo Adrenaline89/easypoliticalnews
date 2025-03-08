@@ -59,15 +59,15 @@ export function mergeArticlesWithAnalysis(
     const news = analysis.results.map(analysisItem => {
         const articleTitle = analysisItem.numberedTitle.split('. ')[1];
         const matchingArticle = articles.find(article => article.title === articleTitle);
-        const relevantCitations = citations.citations.filter(citation => 
-            analysisItem.criteria_matches[citation.step]?.length > 0
-        );
 
         return {
+            title: articleTitle,
+            numberedTitle: analysisItem.numberedTitle,
             headline: articleTitle,
             authorByline: matchingArticle?.authorByline || 'Unknown',
+            pubDate: matchingArticle?.pubDate || new Date().toISOString(),
             url: matchingArticle?.url || '',
-            publication: 'Unknown',
+            publication: matchingArticle?.publication || 'Unknown',
             pubDateTime: matchingArticle?.pubDate || new Date().toISOString(),
             criteria_matches: [
                 ...Object.entries(analysisItem.criteria_matches).map(([source, criteria]) => ({
@@ -82,16 +82,16 @@ export function mergeArticlesWithAnalysis(
         };
     });
 
-    return {
-        news,
-        dateTime: new Date().toISOString()
-    };
+    return { news, dateTime: new Date().toISOString() };
 }
 
 export function sortAnalysisByMatches(news: AnnotatedNews): AnnotatedNews {
     return {
-        results: [...news.results].sort((_a, b) => {
-            // ...existing sort logic...
+        results: [...news.results].sort((a, b) => {
+            // Count total matches
+            const aTotal = Object.values(a.criteria_matches).reduce((sum, arr) => sum + arr.length, 0);
+            const bTotal = Object.values(b.criteria_matches).reduce((sum, arr) => sum + arr.length, 0);
+            return bTotal - aTotal; // Sort descending
         })
     };
 }
