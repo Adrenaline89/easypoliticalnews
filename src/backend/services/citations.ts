@@ -1,6 +1,6 @@
 import sqlite3 from 'sqlite3';
 import { promisify } from 'util';
-import { Citation, CitationStep } from '../types';
+import { Citation as ImportedCitation, CitationStep } from '../types';
 
 interface Citation {
     source: string;

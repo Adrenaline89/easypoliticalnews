@@ -59,6 +59,7 @@ export function mergeArticlesWithAnalysis(
     const news = analysis.results.map(analysisItem => {
         const articleTitle = analysisItem.numberedTitle.split('. ')[1];
         const matchingArticle = articles.find(article => article.title === articleTitle);
+        const relevantCitations = citations.results.filter(c => c.articleTitle === articleTitle);
 
         return {
             title: articleTitle,
