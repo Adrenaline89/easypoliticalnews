@@ -47,12 +47,13 @@ export async function fetchNews(apiKey: string): Promise<NewsArticle[]> {
         const allArticles = responses
             .filter((response): response is PromiseFulfilledResult<any> => response.status === 'fulfilled')
             .flatMap(response => response.value.data.articles)
-            .map(({ title, authorByline, pubDate, url }, index) => ({
+            .map(({ title, authorByline, pubDate, url, source }, index) => ({
                 title,
                 numberedTitle: `${index + 1}. ${title}`,
                 authorByline,
                 pubDate,
-                url
+                url,
+                publication: source?.name || 'Unknown'  // Add publication field
             }));
 
         return Array.from(new Map(allArticles.map(article => [article.title, article])).values());
