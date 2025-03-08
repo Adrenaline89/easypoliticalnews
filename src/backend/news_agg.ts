@@ -1,6 +1,13 @@
 import { config } from "dotenv";
+import path from 'path';
 import { checkPerigonHealth, fetchNews } from "./services/fetchNews";
-import { checkOpenAIHealth, analyzeNewsWithGPT, sortAnalysisByMatches } from "./services/analyzeNews";
+import { 
+    checkOpenAIHealth, 
+    analyzeNewsWithGPT, 
+    sortAnalysisByMatches,
+    createNumberedTitlesString,
+    mergeArticlesWithAnalysis 
+} from "./services/analyzeNews";
 import { saveHeadlines, saveAnnotatedNews, loadAnnotatedNews } from "./services/dbService";
 import { writeMarkdownFile } from "./services/markdownService";
 import { initCitationsDb, insertCitations, ALL_CITATIONS, generateCitationsJson } from './services/citations';
@@ -60,7 +67,7 @@ To prevent the dismantling of democracy, news consumers, journalists, and policy
 To prevent the dismantling of democracy and the rise of authoritarian rule, news consumers, journalists, and policymakers should be vigilant for **early warning signs** based on the steps the Nazis took to seize power. These serve as **criteria for news to monitor** in order to safeguard democratic institutions.
 
 ---
-Based on the criteria for how the Nazis rose to power, here are the relevant citations:
+Based on the criteria for how the Nazis rose to power, here are the i relevant citations:
 
 1. Create a crisis:  
     The Nazis exploited the Reichstag fire to gain approval for extreme measures
