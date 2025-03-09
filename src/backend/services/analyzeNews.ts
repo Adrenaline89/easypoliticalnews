@@ -74,15 +74,16 @@ export function mergeArticlesWithAnalysis(
         const articleTitle = titleParts.length > 1 ? titleParts[1] : analysisItem.numberedTitle;
         const matchingArticle = articles.find(article => article.title === articleTitle);
         
-        const criteria_matches = Object.entries(analysisItem.criteria_matches || {}).map(([source, criteria]) => ({
-            source: source as CitationStep,
-            criteria: criteria.map(c => ({
-                criteria_name: c,
-                url: citations.citations.find(citation => 
-                    citation.step === source && citation.links.length > 0
-                )?.links[0] || ''
+        const criteria_matches = [
+            ...Object.entries(analysisItem.criteria_matches || {}).map(([source, criteria]) => ({
+                source: source as CitationStep,
+                criteria
+            })),
+            ...citations.citations.map(citation => ({
+                source: 'citations',
+                criteria: citation.links
             }))
-        }));
+        ];
 
         return {
             title: articleTitle,
