@@ -1,6 +1,10 @@
 import { NewsArticle, AnnotatedNews, CitationStep, CompleteAnnotatedNews, CriteriaMatch } from '../types';
 import { SimpleCitationResult } from './citations';
 
+interface AnnotatedNewsItem extends NewsArticle {
+    criteria_matches: CriteriaMatch[];
+}
+
 // Helper interfaces for substeps
 interface ArticleMetadata {
     title: string;
