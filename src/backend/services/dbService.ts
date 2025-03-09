@@ -87,7 +87,7 @@ export async function saveAnnotatedNews(analysis: AnnotatedNews): Promise<void> 
         for (const result of analysis.results) {
             const { lastInsertRowid } = insertNewsStmt.run(result.numberedTitle);
             
-            for (const [source, criteria] of Object.entries(result.criteria_matches)) {
+            for (const [source, criteria] of Object.entries(result.headline_criteria_matches)) {
                 for (const criterion of criteria) {
                     insertMatchStmt.run(lastInsertRowid, source, criterion);
                 }
