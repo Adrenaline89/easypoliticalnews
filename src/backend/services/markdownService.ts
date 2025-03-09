@@ -1,6 +1,7 @@
 import fs from 'fs-extra';
 import path from 'path';
 import { CompleteAnnotatedNews } from '../types';
+import { logger } from './logger';
 
 const OUTPUT_DIR = path.join(__dirname, "../../../src/content/");
 
@@ -10,11 +11,17 @@ export function generateMarkdownPath(): string {
         .replace(/[:.]/g, '-')
         .replace('T', '_')
         .split('.')[0];
-    return path.join(OUTPUT_DIR, `news-${timestamp}.md`);
+    const filePath = path.join(OUTPUT_DIR, `news-${timestamp}.md`);
+    logger.info(`Generated markdown path: ${filePath}`);
+    return filePath;
 }
 
 export async function writeMarkdownFile(analysis: CompleteAnnotatedNews): Promise<void> {
     const outputPath = generateMarkdownPath();
+    
+    logger.info(`Writing markdown to: ${outputPath}`);
+    await fs.ensureDir(path.dirname(outputPath));
+
     const markdownContent = `---
 news:
 ${analysis.news.map(article => `
@@ -25,5 +32,5 @@ dateTime: ${JSON.stringify(analysis.dateTime)}
 ---`;
 
     await fs.writeFile(outputPath, markdownContent);
-    console.log("Markdown file updated:", outputPath);
+    logger.success(`Markdown file written to: ${outputPath}`);
 }
