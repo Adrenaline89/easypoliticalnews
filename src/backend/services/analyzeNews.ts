@@ -88,11 +88,17 @@ export function mergeArticlesWithAnalysis(
             criteria_matches: [
                 ...Object.entries(analysisItem.criteria_matches || {}).map(([source, criteria]) => ({
                     source: source as CitationStep,
-                    criteria: Array.isArray(criteria) ? criteria : []
+                    criteria: criteria.map(c => ({
+                        criteria_name: c,
+                        url: ''  // URL will be filled from citations
+                    }))
                 })),
                 ...relevantCitations.map(citation => ({
                     source: 'citations',
-                    criteria: citation.links
+                    criteria: citation.links.map(link => ({
+                        criteria_name: citation.step,
+                        url: link
+                    }))
                 }))
             ]
         };

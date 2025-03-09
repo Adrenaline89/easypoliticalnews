@@ -1,5 +1,6 @@
 import { config } from "dotenv";
 import path from 'path';
+import fs from 'fs-extra';
 import { checkPerigonHealth, fetchNews } from "./services/fetchNews";
 import { 
     checkOpenAIHealth, 
@@ -178,6 +179,18 @@ here  are the headlines. make sure not to remove the numbers:
 `
 
 // Main execution function
+const JSON_LOG_FILE = '/tmp/json-files.log';
+
+async function logJson(functionName: string, varName: string, data: any): Promise<void> {
+    const entry = {
+        timestamp: new Date().toISOString(),
+        function: functionName,
+        variable: varName,
+        data
+    };
+    await fs.appendFile(JSON_LOG_FILE, JSON.stringify(entry, null, 2) + '\n');
+}
+
 async function main(): Promise<void> {
     try {
         //
@@ -214,6 +227,7 @@ async function main(): Promise<void> {
             throw new Error("No articles fetched");
         }
         logger.success(`Fetched ${articles.length} articles`);
+        await logJson('fetchNews', 'articles', articles);
 
         //
         // STEP 3: Data Preparation
@@ -223,6 +237,7 @@ async function main(): Promise<void> {
         if (!numberedTitles) {
             throw new Error("Failed to create numbered titles");
         }
+        await logJson('createNumberedTitlesString', 'numberedTitles', numberedTitles);
 
         //
         // STEP 4: Analysis
@@ -233,9 +248,11 @@ async function main(): Promise<void> {
         if (!analysis.results || analysis.results.length === 0) {
             throw new Error("Analysis failed or returned no results");
         }
+            await logJson('analyzeNewsWithGPT', 'analysis', analysis);
         
         const sortedAnalysis = sortAnalysisByMatches(analysis);
         logger.success(`Analyzed ${sortedAnalysis.results.length} articles`);
+        await logJson('sortAnalysisByMatches', 'sortedAnalysis', sortedAnalysis);
 
         //
         // STEP 5: Persistence
@@ -257,14 +274,17 @@ async function main(): Promise<void> {
         
         const citationsJson = await generateCitationsJson(citationsDbPath);
         logger.success("All citations processed");
+        await logJson('generateCitationsJson', 'citationsJson', citationsJson);
 
         //
         // STEP 6: Presentation with Citations
         // Generate markdown output including citations
         //
         logger.info("Rendering analysis with citations...");
-        await writeMarkdownFile(mergeArticlesWithAnalysis(articles, sortedAnalysis, citationsJson));
+        const finalAnalysis = mergeArticlesWithAnalysis(articles, sortedAnalysis, citationsJson);
+        await writeMarkdownFile(finalAnalysis);
         logger.success("Analysis rendered");
+        await logJson('mergeArticlesWithAnalysis', 'finalAnalysis', finalAnalysis);
 
     } catch (error) {
         //
