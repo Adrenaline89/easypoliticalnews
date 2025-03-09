@@ -7,13 +7,15 @@ import {
     analyzeNewsWithGPT, 
     sortAnalysisByMatches,
     createNumberedTitlesString,
-    mergeArticlesWithAnalysis 
+    mergeArticlesWithAnalysis, 
+    mergeArticlesWithAnalysis2
 } from "./services/analyzeNews";
 import { saveHeadlines, saveAnnotatedNews, loadAnnotatedNews, initializeDatabase } from "./services/dbService";
 import { writeMarkdownFile } from "./services/markdownService";
-import { initCitationsDb, insertCitations, ALL_CITATIONS, generateCitationsJson } from './services/citations';
+import { initCitationsDb, insertCitations, ALL_CITATIONS, generateCitationsJson, SimpleCitationResult } from './services/citations';
 import { NewsArticle, AnnotatedNews, CompleteAnnotatedNews } from "./types";
 import { logger } from './services/logger';
+import { mergeArticlesWithAnalysis3 } from "./services/mergeArticles";
 
 config(); // Load environment variables
 
@@ -273,6 +275,7 @@ async function main(): Promise<void> {
         await insertCitations(citationsDbPath, ALL_CITATIONS);
         
         const citationsJson = await generateCitationsJson(citationsDbPath);
+        const citationResult: SimpleCitationResult = await generateCitationsJson(citationsDbPath);
         logger.success("All citations processed");
         await logJson('generateCitationsJson', 'citationsJson', citationsJson);
 
@@ -281,7 +284,7 @@ async function main(): Promise<void> {
         // Generate markdown output including citations
         //
         logger.info("Rendering analysis with citations...");
-        const finalAnalysis = mergeArticlesWithAnalysis(articles, sortedAnalysis, citationsJson);
+        const finalAnalysis = mergeArticlesWithAnalysis3(articles, sortedAnalysis, citationResult);
         await logJson('mergeArticlesWithAnalysis', 'finalAnalysis', finalAnalysis);
         await writeMarkdownFile(finalAnalysis);
         logger.success("Analysis rendered");
