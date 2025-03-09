@@ -73,10 +73,16 @@ export function mergeArticlesWithAnalysis(
         const titleParts = analysisItem.numberedTitle.split('. ');
         const articleTitle = titleParts.length > 1 ? titleParts[1] : analysisItem.numberedTitle;
         const matchingArticle = articles.find(article => article.title === articleTitle);
-        const relevantCitations = citations.citations.filter(citation => 
-            Object.values(CitationStep).includes(citation.step as CitationStep) && 
-            analysisItem.criteria_matches[citation.step]?.length > 0
-        );
+        
+        const criteria_matches = Object.entries(analysisItem.criteria_matches || {}).map(([source, criteria]) => ({
+            source: source as CitationStep,
+            criteria: criteria.map(c => ({
+                criteria_name: c,
+                url: citations.citations.find(citation => 
+                    citation.step === source && citation.links.length > 0
+                )?.links[0] || ''
+            }))
+        }));
 
         return {
             title: articleTitle,
@@ -85,22 +91,7 @@ export function mergeArticlesWithAnalysis(
             pubDate: matchingArticle?.pubDate || new Date().toISOString(),
             url: matchingArticle?.url || '',
             publication: matchingArticle?.publication || 'Unknown',
-            criteria_matches: [
-                ...Object.entries(analysisItem.criteria_matches || {}).map(([source, criteria]) => ({
-                    source: source as CitationStep,
-                    criteria: criteria.map(c => ({
-                        criteria_name: c,
-                        url: ''  // URL will be filled from citations
-                    }))
-                })),
-                ...relevantCitations.map(citation => ({
-                    source: 'citations',
-                    criteria: citation.links.map(link => ({
-                        criteria_name: citation.step,
-                        url: link
-                    }))
-                }))
-            ]
+            criteria_matches
         };
     });
 
