@@ -1,4 +1,4 @@
-import { config } from "dotenv";
+import { config } from "dotenv"; 
 import path from 'path';
 import { checkPerigonHealth, fetchNews } from "./services/fetchNews";
 import { 
@@ -8,7 +8,7 @@ import {
     createNumberedTitlesString,
     mergeArticlesWithAnalysis 
 } from "./services/analyzeNews";
-import { saveHeadlines, saveAnnotatedNews, loadAnnotatedNews } from "./services/dbService";
+import { saveHeadlines, saveAnnotatedNews, loadAnnotatedNews, initializeDatabase } from "./services/dbService";
 import { writeMarkdownFile } from "./services/markdownService";
 import { initCitationsDb, insertCitations, ALL_CITATIONS, generateCitationsJson } from './services/citations';
 import { NewsArticle, AnnotatedNews, CompleteAnnotatedNews } from "./types";
@@ -180,6 +180,14 @@ here  are the headlines. make sure not to remove the numbers:
 // Main execution function
 async function main(): Promise<void> {
     try {
+        //
+        // STEP 0: Initialize Database
+        // Create all required tables
+        //
+        logger.info("Initializing database...");
+        initializeDatabase();
+        logger.success("Database initialized");
+
         //
         // STEP 1: Health Checks
         // Verify both APIs are available before proceeding
