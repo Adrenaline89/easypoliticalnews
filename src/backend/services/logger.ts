@@ -8,8 +8,17 @@ const LOG_FILE = path.join(LOG_DIR, 'news_agg.log');
 fs.ensureDirSync(LOG_DIR);
 
 function formatLogMessage(level: string, message: string): string {
-    const timestamp = new Date().toISOString();
-    return `[${timestamp}] ${level}: ${message}\n`;
+    const timestamp = new Date().toLocaleString('en-US', {
+        timeZone: 'America/Los_Angeles',
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        hour12: false
+    });
+    return `[${timestamp} PT] ${level}: ${message}\n`;
 }
 
 export const logger = {
