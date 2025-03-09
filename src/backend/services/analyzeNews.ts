@@ -61,9 +61,6 @@ export function mergeArticlesWithAnalysis(
     logger.info(`Function: ${mergeArticlesWithAnalysis.name}, Variable: analysis`);
     logger.info(JSON.stringify(analysis, null, 2));
 
-    // Log function name and variable name with input data
-    logger.info(`${mergeArticlesWithAnalysis.name} input - analysis: ${JSON.stringify({ articles, analysis, citations }, null, 2)}`);
-
     const news = analysis.results.map(analysisItem => {
         if (!analysisItem?.numberedTitle || typeof analysisItem.numberedTitle !== 'string') {
             console.error('Invalid numbered title:', analysisItem);
@@ -83,7 +80,7 @@ export function mergeArticlesWithAnalysis(
         const matchingArticle = articles.find(article => article.title === articleTitle);
         
         const criteria_matches = [
-            ...Object.entries(analysisItem.criteria_matches || {}).map(([source, criteria]) => ({
+            ...Object.entries(analysisItem.headline_criteria_matches || {}).map(([source, criteria]) => ({
                 source: source as CitationStep,
                 criteria: criteria.map(c => ({
                     criteria_name: c,
@@ -122,8 +119,8 @@ export function mergeArticlesWithAnalysis(
 export function sortAnalysisByMatches(news: AnnotatedNews): AnnotatedNews {
     return {
         results: [...news.results].sort((a, b) => {
-            const aTotal = Object.values(a.criteria_matches).reduce((sum, arr) => sum + arr.length, 0);
-            const bTotal = Object.values(b.criteria_matches).reduce((sum, arr) => sum + arr.length, 0);
+            const aTotal = Object.values(a.headline_criteria_matches || {}).reduce((sum, arr) => sum + arr.length, 0);
+            const bTotal = Object.values(b.headline_criteria_matches || {}).reduce((sum, arr) => sum + arr.length, 0);
             return bTotal - aTotal;
         })
     };

@@ -12,18 +12,25 @@ export interface NewsArticle {
 export interface AnnotatedNews {
     results: {
         numberedTitle: string;
-        criteria_matches: {
+        headline_criteria_matches: {
             [key: string]: string[];
         };
     }[];
 }
 
 // Add new interface for news items with criteria
+export interface CriteriaAndLink {
+    criteria_name: string;
+    url: string;
+}
+
+export interface CriteriaMatch {
+    source: CitationStep | 'citations';
+    criteria: CriteriaAndLink[];
+}
+
 export interface AnnotatedNewsItem extends NewsArticle {
-    criteria_matches: {
-        source: string;
-        criteria: string[];
-    }[];
+    criteria_matches: CriteriaMatch[];
 }
 
 export interface CompleteAnnotatedNews {
