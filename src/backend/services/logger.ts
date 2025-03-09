@@ -1,8 +1,8 @@
 import fs from 'fs-extra';
 import path from 'path';
 
-const LOG_DIR = '/tmp/news_agg.lo';
-const LOG_FILE = path.join(LOG_DIR, 'log');
+const LOG_DIR = '/tmp/';
+const LOG_FILE = path.join(LOG_DIR, 'news_agg.log');
 
 // Ensure log directory exists
 fs.ensureDirSync(LOG_DIR);

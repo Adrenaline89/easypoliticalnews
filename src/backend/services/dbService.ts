@@ -6,43 +6,47 @@ const dbPath = path.join(__dirname, "../../../../news.db");
 const db = new Database(dbPath);
 
 export function initializeDatabase(): void {
-    db.exec(`
-        CREATE TABLE IF NOT EXISTS headlines (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            title TEXT UNIQUE,
-            numberedTitle TEXT,
-            authorByline TEXT,
-            pubDate TEXT,
-            url TEXT,
-            publication TEXT DEFAULT 'Unknown',
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-        );
+    try {
+        db.exec(`
+            CREATE TABLE IF NOT EXISTS headlines (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                title TEXT UNIQUE,
+                numberedTitle TEXT,
+                authorByline TEXT,
+                pubDate TEXT,
+                url TEXT,
+                publication TEXT DEFAULT 'Unknown',
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            );
 
-        CREATE TABLE IF NOT EXISTS annotated_news (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            numberedTitle TEXT UNIQUE,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-        );
+            CREATE TABLE IF NOT EXISTS annotated_news (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                numberedTitle TEXT UNIQUE,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            );
 
-        CREATE TABLE IF NOT EXISTS criteria_matches (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            annotated_news_id INTEGER,
-            source TEXT NOT NULL,
-            criteria TEXT NOT NULL,
-            FOREIGN KEY(annotated_news_id) REFERENCES annotated_news(id) ON DELETE CASCADE
-        );
+            CREATE TABLE IF NOT EXISTS criteria_matches (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                annotated_news_id INTEGER,
+                source TEXT NOT NULL,
+                criteria TEXT NOT NULL,
+                FOREIGN KEY(annotated_news_id) REFERENCES annotated_news(id) ON DELETE CASCADE
+            );
 
-        CREATE TABLE IF NOT EXISTS complete_annotated_news (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            article_id INTEGER,
-            criteria_matches_id INTEGER,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            FOREIGN KEY(article_id) REFERENCES headlines(id),
-            FOREIGN KEY(criteria_matches_id) REFERENCES criteria_matches(id)
-        );
+            CREATE TABLE IF NOT EXISTS complete_annotated_news (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                article_id INTEGER,
+                criteria_matches_id INTEGER,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                FOREIGN KEY(article_id) REFERENCES headlines(id),
+                FOREIGN KEY(criteria_matches_id) REFERENCES criteria_matches(id)
+            );
 
-        PRAGMA foreign_keys = ON;
-    `);
+            PRAGMA foreign_keys = ON;
+        `);
+    } catch (error) {
+        throw new Error(`Failed to initialize database: ${error}`);
+    }
 }
 
 export async function saveHeadlines(articles: NewsArticle[]): Promise<void> {
