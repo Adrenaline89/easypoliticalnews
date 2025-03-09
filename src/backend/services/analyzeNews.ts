@@ -79,17 +79,18 @@ export function mergeArticlesWithAnalysis(
         const articleTitle = titleParts.length > 1 ? titleParts[1] : analysisItem.numberedTitle;
         const matchingArticle = articles.find(article => article.title === articleTitle);
         
-        const criteria_matches = [
-            ...Object.entries(analysisItem.headline_criteria_matches || {}).map(([source, criteria]) => ({
+        const criteria_matches = Object.entries(analysisItem.headline_criteria_matches || {}).flatMap(([source, criteriaList]) => {
+            const matchingCitation = citations.citations.find(c => c.step === source);
+            if (!matchingCitation) return [];
+
+            return [{
                 source: source as CitationStep,
-                criteria: criteria.map(c => ({
-                    criteria_name: c,
-                    url: citations.citations.find(citation => 
-                        citation.step === source
-                    )?.links[0] || ''
+                criteria: criteriaList.map(criteria => ({
+                    criteria_name: criteria,
+                    url: matchingCitation.links[0] || ''
                 }))
-            }))
-        ];
+            }];
+        });
 
         return {
             title: articleTitle,
