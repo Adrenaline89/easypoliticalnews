@@ -114,8 +114,8 @@ export function mergeArticlesWithAnalysis(
 export function sortAnalysisByMatches(news: AnnotatedNews): AnnotatedNews {
     return {
         results: [...news.results].sort((a, b) => {
-            const aTotal = Object.values(a.criteria_matches).reduce((sum, arr) => sum + arr.length, 0);
-            const bTotal = Object.values(b.criteria_matches).reduce((sum, arr) => sum + arr.length, 0);
+            const aTotal = Object.values(a.headline_criteria_matches || {}).reduce((sum, arr) => sum + arr.length, 0);
+            const bTotal = Object.values(b.headline_criteria_matches || {}).reduce((sum, arr) => sum + arr.length, 0);
             return bTotal - aTotal;
         })
     };
