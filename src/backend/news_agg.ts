@@ -282,9 +282,9 @@ async function main(): Promise<void> {
         //
         logger.info("Rendering analysis with citations...");
         const finalAnalysis = mergeArticlesWithAnalysis(articles, sortedAnalysis, citationsJson);
+        await logJson('mergeArticlesWithAnalysis', 'finalAnalysis', finalAnalysis);
         await writeMarkdownFile(finalAnalysis);
         logger.success("Analysis rendered");
-        await logJson('mergeArticlesWithAnalysis', 'finalAnalysis', finalAnalysis);
 
     } catch (error) {
         //

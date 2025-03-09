@@ -2,6 +2,7 @@ import { OpenAI } from 'openai';
 import { NewsArticle, AnnotatedNews, CitationStep } from '../types';
 import { CompleteAnnotatedNews } from '../types';
 import { SimpleCitationResult } from './citations';
+import { logger } from './logger';
 
 export async function checkOpenAIHealth(apiKey: string): Promise<boolean> {
     try {
@@ -56,7 +57,12 @@ export function mergeArticlesWithAnalysis(
     analysis: AnnotatedNews,
     citations: SimpleCitationResult
 ): CompleteAnnotatedNews {
-    await logJson('mergeArticlesWithAnalysis', 'analysis', analysis);
+    // Log function name and analysis variable
+    logger.info(`Function: ${mergeArticlesWithAnalysis.name}, Variable: analysis`);
+    logger.info(JSON.stringify(analysis, null, 2));
+
+    // Log function name and variable name with input data
+    logger.info(`${mergeArticlesWithAnalysis.name} input - analysis: ${JSON.stringify({ articles, analysis, citations }, null, 2)}`);
 
     const news = analysis.results.map(analysisItem => {
         if (!analysisItem?.numberedTitle || typeof analysisItem.numberedTitle !== 'string') {
@@ -79,11 +85,17 @@ export function mergeArticlesWithAnalysis(
         const criteria_matches = [
             ...Object.entries(analysisItem.criteria_matches || {}).map(([source, criteria]) => ({
                 source: source as CitationStep,
-                criteria
+                criteria: criteria.map(c => ({
+                    criteria_name: c,
+                    url: ''
+                }))
             })),
             ...citations.citations.map(citation => ({
-                source: 'citations',
-                criteria: citation.links
+                source: 'citations' as const,
+                criteria: citation.links.map(link => ({
+                    criteria_name: citation.step,
+                    url: link
+                }))
             }))
         ];
 
@@ -98,7 +110,13 @@ export function mergeArticlesWithAnalysis(
         };
     });
 
-    return { news, dateTime: new Date().toISOString() };
+    const result = { news, dateTime: new Date().toISOString() };
+    
+    // Log output
+    logger.info('mergeArticlesWithAnalysis output:');
+    logger.info(JSON.stringify(result, null, 2));
+
+    return result;
 }
 
 export function sortAnalysisByMatches(news: AnnotatedNews): AnnotatedNews {
@@ -109,8 +127,5 @@ export function sortAnalysisByMatches(news: AnnotatedNews): AnnotatedNews {
             return bTotal - aTotal;
         })
     };
-}
-function logJson(arg0: string, arg1: string, analysis: AnnotatedNews) {
-    throw new Error('Function not implemented.');
 }
 
