@@ -57,7 +57,21 @@ export function mergeArticlesWithAnalysis(
     citations: SimpleCitationResult
 ): CompleteAnnotatedNews {
     const news = analysis.results.map(analysisItem => {
-        const articleTitle = analysisItem.numberedTitle.split('. ')[1];
+        if (!analysisItem?.numberedTitle || typeof analysisItem.numberedTitle !== 'string') {
+            console.error('Invalid numbered title:', analysisItem);
+            return {
+                title: 'Unknown',
+                numberedTitle: 'Unknown',
+                authorByline: 'Unknown',
+                pubDate: new Date().toISOString(),
+                url: '',
+                publication: 'Unknown',
+                criteria_matches: []
+            };
+        }
+
+        const titleParts = analysisItem.numberedTitle.split('. ');
+        const articleTitle = titleParts.length > 1 ? titleParts[1] : analysisItem.numberedTitle;
         const matchingArticle = articles.find(article => article.title === articleTitle);
         const relevantCitations = citations.citations.filter(citation => 
             Object.values(CitationStep).includes(citation.step as CitationStep) && 
@@ -72,9 +86,9 @@ export function mergeArticlesWithAnalysis(
             url: matchingArticle?.url || '',
             publication: matchingArticle?.publication || 'Unknown',
             criteria_matches: [
-                ...Object.entries(analysisItem.criteria_matches).map(([source, criteria]) => ({
+                ...Object.entries(analysisItem.criteria_matches || {}).map(([source, criteria]) => ({
                     source: source as CitationStep,
-                    criteria
+                    criteria: Array.isArray(criteria) ? criteria : []
                 })),
                 ...relevantCitations.map(citation => ({
                     source: 'citations',

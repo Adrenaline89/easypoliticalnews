@@ -1,4 +1,4 @@
-import { config } from "dotenv"; 
+import { config } from "dotenv";
 import path from 'path';
 import { checkPerigonHealth, fetchNews } from "./services/fetchNews";
 import { 
