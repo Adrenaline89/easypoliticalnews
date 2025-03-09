@@ -56,6 +56,8 @@ export function mergeArticlesWithAnalysis(
     analysis: AnnotatedNews,
     citations: SimpleCitationResult
 ): CompleteAnnotatedNews {
+    await logJson('mergeArticlesWithAnalysis', 'analysis', analysis);
+
     const news = analysis.results.map(analysisItem => {
         if (!analysisItem?.numberedTitle || typeof analysisItem.numberedTitle !== 'string') {
             console.error('Invalid numbered title:', analysisItem);
@@ -108,3 +110,7 @@ export function sortAnalysisByMatches(news: AnnotatedNews): AnnotatedNews {
         })
     };
 }
+function logJson(arg0: string, arg1: string, analysis: AnnotatedNews) {
+    throw new Error('Function not implemented.');
+}
+
