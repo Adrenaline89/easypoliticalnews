@@ -28,16 +28,16 @@ interface ArticleMetadata {
  * Output Type:
  * string (e.g. "Article Title")
  */
-export function extractArticleTitle(numberedTitle: string | undefined | null): string {
+export function extractArticleTitle(numberedTitle: Array<string>): string {
     /*
     if (!numberedTitle || typeof numberedTitle !== 'string') {
         console.error('Invalid numberedTitle:', numberedTitle);
         return 'Unknown Title';
     }
     */
-    
-    const titleParts = numberedTitle.split('. ');
-    return titleParts.length > 1 ? titleParts.slice(1).join('. ') : numberedTitle;
+    const nt: string = numberedTitle[0];
+    const titleParts = nt.split('. ');
+    return titleParts.length > 1 ? titleParts.slice(1).join('. ') : nt;
 }
 
 /**
