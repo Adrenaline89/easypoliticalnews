@@ -11,7 +11,7 @@ export function generateMarkdownPath(): string {
         .replace(/[:.]/g, '-')
         .replace('T', '_')
         .split('.')[0];
-    const filePath = path.join(OUTPUT_DIR, `news-${timestamp}.md`);
+    const filePath = path.join(OUTPUT_DIR, `news-${timestamp}.mdoc`);  // Changed back to .md
     logger.info(`Generated markdown path: ${filePath}`);
     return filePath;
 }
@@ -26,15 +26,32 @@ export async function writeMarkdownFile(analysis: CompleteAnnotatedNews): Promis
     logger.info(`Writing markdown to: ${outputPath}`);
     await fs.ensureDir(path.dirname(outputPath));
 
-    const markdownContent = `---
-news:
-${analysis.news.map(article => `
-  - headline: ${JSON.stringify(article.headline)}
-    // ...rest of markdown generation...
-`).join('\n')}
-dateTime: ${JSON.stringify(analysis.dateTime)}
----`;
+    const yamlContent = [
+        '---',
+        'news:',
+        ...analysis.news.map(article => [
+            '  - title: ' + JSON.stringify(article.title),
+            '    numberedTitle: ' + JSON.stringify(article.numberedTitle),
+            '    authorByline: ' + JSON.stringify(article.authorByline),
+            '    pubDate: ' + JSON.stringify(article.pubDate),
+            '    url: ' + JSON.stringify(article.url),
+            '    publication: ' + JSON.stringify(article.publication),
+            '    criteria_matches:',
+            ...article.criteria_matches.map(match => [
+                '      - source: ' + JSON.stringify(match.source),
+                '        criteria:',
+                ...match.criteria.map(c => [
+                    '          - criteria_name: ' + JSON.stringify(c.criteria_name),
+                    '            url: ' + JSON.stringify(c.url)
+                ].join('\n'))
+            ].join('\n'))
+        ].join('\n')),
+        'dateTime: ' + JSON.stringify(analysis.dateTime),
+        '---',
+        '',
+        '<!-- Content will be added here -->'
+    ].join('\n');
 
-    await fs.writeFile(outputPath, markdownContent);
+    await fs.writeFile(outputPath, yamlContent);
     logger.success(`Markdown file written to: ${outputPath}`);
 }
