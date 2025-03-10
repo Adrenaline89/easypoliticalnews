@@ -29,10 +29,12 @@ interface ArticleMetadata {
  * string (e.g. "Article Title")
  */
 export function extractArticleTitle(numberedTitle: string | undefined | null): string {
+    /*
     if (!numberedTitle || typeof numberedTitle !== 'string') {
         console.error('Invalid numberedTitle:', numberedTitle);
         return 'Unknown Title';
     }
+    */
     
     const titleParts = numberedTitle.split('. ');
     return titleParts.length > 1 ? titleParts.slice(1).join('. ') : numberedTitle;
