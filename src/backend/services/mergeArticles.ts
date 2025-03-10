@@ -1,5 +1,6 @@
 import { NewsArticle, AnnotatedNews, CitationStep, CompleteAnnotatedNews, CriteriaMatch } from '../types';
 import { SimpleCitationResult } from './citations';
+import { logger } from './logger';
 
 interface AnnotatedNewsItem extends NewsArticle {
     criteria_matches: CriteriaMatch[];
@@ -165,14 +166,84 @@ export function mergeArticlesWithAnalysis3(
     citationResult: SimpleCitationResult
 ): CompleteAnnotatedNews {
     const news = sortedAnalysis.results.map(analysisItem => {
+        // Log before extractArticleTitle
+        logger.info(JSON.stringify({
+            timestamp: new Date().toISOString(),
+            event: 'before_extractArticleTitle',
+            input: analysisItem.numberedTitle
+        }));
         const title = extractArticleTitle(analysisItem.numberedTitle);
+        // Log after extractArticleTitle
+        logger.info(JSON.stringify({
+            timestamp: new Date().toISOString(),
+            event: 'after_extractArticleTitle',
+            output: title
+        }));
+
+        // Log before findMatchingArticle
+        logger.info(JSON.stringify({
+            timestamp: new Date().toISOString(),
+            event: 'before_findMatchingArticle',
+            input: { title, articlesCount: articles.length }
+        }));
         const metadata = findMatchingArticle(title, articles);
+        // Log after findMatchingArticle
+        logger.info(JSON.stringify({
+            timestamp: new Date().toISOString(),
+            event: 'after_findMatchingArticle',
+            output: metadata
+        }));
+
+        // Log before processCriteriaMatches
+        logger.info(JSON.stringify({
+            timestamp: new Date().toISOString(),
+            event: 'before_processCriteriaMatches',
+            input: {
+                headline_criteria_matches: analysisItem.headline_criteria_matches,
+                citationCount: citationResult.citations.length
+            }
+        }));
         const criteria_matches = processCriteriaMatches(
             analysisItem.headline_criteria_matches,
             citationResult
         );
-        return buildAnnotatedNewsItem(metadata, criteria_matches);
+        // Log after processCriteriaMatches
+        logger.info(JSON.stringify({
+            timestamp: new Date().toISOString(),
+            event: 'after_processCriteriaMatches',
+            output: criteria_matches
+        }));
+
+        // Log before buildAnnotatedNewsItem
+        logger.info(JSON.stringify({
+            timestamp: new Date().toISOString(),
+            event: 'before_buildAnnotatedNewsItem',
+            input: { metadata, criteriaMatchesCount: criteria_matches.length }
+        }));
+        const result = buildAnnotatedNewsItem(metadata, criteria_matches);
+        // Log after buildAnnotatedNewsItem
+        logger.info(JSON.stringify({
+            timestamp: new Date().toISOString(),
+            event: 'after_buildAnnotatedNewsItem',
+            output: result
+        }));
+
+        return result;
     });
 
-    return createCompleteAnalysis(news);
+    // Log before createCompleteAnalysis
+    logger.info(JSON.stringify({
+        timestamp: new Date().toISOString(),
+        event: 'before_createCompleteAnalysis',
+        input: { newsCount: news.length }
+    }));
+    const finalResult = createCompleteAnalysis(news);
+    // Log after createCompleteAnalysis
+    logger.info(JSON.stringify({
+        timestamp: new Date().toISOString(),
+        event: 'after_createCompleteAnalysis',
+        output: finalResult
+    }));
+
+    return finalResult;
 }

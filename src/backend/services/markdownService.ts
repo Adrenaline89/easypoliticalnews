@@ -19,6 +19,10 @@ export function generateMarkdownPath(): string {
 export async function writeMarkdownFile(analysis: CompleteAnnotatedNews): Promise<void> {
     const outputPath = generateMarkdownPath();
     
+    // Log analysis object - Used by mergeArticlesWithAnalysis3 in mergeArticles.ts
+    logger.info('Analysis object received in writeMarkdownFile:');
+    logger.info(JSON.stringify(analysis, null, 2));
+
     logger.info(`Writing markdown to: ${outputPath}`);
     await fs.ensureDir(path.dirname(outputPath));
 
