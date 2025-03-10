@@ -7,5 +7,9 @@
     "baseUrl": "./", 
     "paths": { 
       "*": ["node_modules/*"] }
-    } 
+    },
+    "sourceMap": true,
+    "outDir": "./dist",
+    "target": "ES6",
+    "module": "CommonJS"
 }

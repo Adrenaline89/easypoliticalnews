@@ -1,5 +1,6 @@
 import fs from 'fs-extra';
-import path from 'path';
+import path from 'node:path';
+
 
 const LOG_DIR = '/tmp/';
 const LOG_FILE = path.join(LOG_DIR, 'news_agg.log');

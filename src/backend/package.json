@@ -8,6 +8,8 @@
         "fs-extra": "^11.3.0",
         "openai": "^4.86.1",
         "sqlite3": "^5.1.7",
-        "typescript": "^5.8.2"
+        "typescript": "^5.8.2",
+        "@types/fs-extra": "^11.0.4",
+        "ts-node": "^10.9.2"
     }
 }
