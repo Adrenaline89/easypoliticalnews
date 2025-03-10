@@ -212,7 +212,12 @@ export function mergeArticlesWithAnalysis(
 export function sortAnalysisByMatches(news: AnnotatedNews): AnnotatedNews {
     return {
         results: [...news.results]
-            .filter(result => typeof result.numberedTitle === 'string') // Filter out invalid items
+            .map(result => ({
+                ...result,
+                numberedTitle: Array.isArray(result.numberedTitle) 
+                    ? result.numberedTitle[0] 
+                    : result.numberedTitle
+            }))
             .sort((a, b) => {
                 const aTotal = Object.values(a.headline_criteria_matches || {})
                     .reduce((sum, arr) => sum + arr.length, 0);
