@@ -1,6 +1,6 @@
 import { NewsArticle, AnnotatedNews, CitationStep, CompleteAnnotatedNews, CriteriaMatch } from '../types';
 import { SimpleCitationResult } from './citations';
-import { logger } from './logger';
+import { logger, logJson } from './logger';  // Add this import
 
 interface AnnotatedNewsItem extends NewsArticle {
     criteria_matches: CriteriaMatch[];
@@ -160,90 +160,108 @@ export function createCompleteAnalysis(
  * Where AnnotatedNewsItem extends NewsArticle with:
  * criteria_matches: CriteriaMatch[]
  */
-export function mergeArticlesWithAnalysis3(
+export async function mergeArticlesWithAnalysis3(
     articles: NewsArticle[],
     sortedAnalysis: AnnotatedNews,
     citationResult: SimpleCitationResult
-): CompleteAnnotatedNews {
-    const news = sortedAnalysis.results.map(analysisItem => {
+): Promise<CompleteAnnotatedNews> {
+    const news = await Promise.all(sortedAnalysis.results.map(async analysisItem => {
         // Log before extractArticleTitle
-        logger.info(JSON.stringify({
-            timestamp: new Date().toISOString(),
-            event: 'before_extractArticleTitle',
-            input: analysisItem.numberedTitle
-        }));
+        await logJson(
+            'before_extractArticleTitle',
+            'before',
+            'numberedTitle',
+            'string',
+            analysisItem.numberedTitle
+        );
         const title = extractArticleTitle(analysisItem.numberedTitle);
-        // Log after extractArticleTitle
-        logger.info(JSON.stringify({
-            timestamp: new Date().toISOString(),
-            event: 'after_extractArticleTitle',
-            output: title
-        }));
+        await logJson(
+            'after_extractArticleTitle',
+            'after',
+            'title',
+            'string',
+            title
+        );
 
-        // Log before findMatchingArticle
-        logger.info(JSON.stringify({
-            timestamp: new Date().toISOString(),
-            event: 'before_findMatchingArticle',
-            input: { title, articlesCount: articles.length }
-        }));
+        // Log findMatchingArticle
+        await logJson(
+            'before_findMatchingArticle',
+            'before',
+            'searchParams',
+            'object',
+            { title, articlesCount: articles.length }
+        );
         const metadata = findMatchingArticle(title, articles);
-        // Log after findMatchingArticle
-        logger.info(JSON.stringify({
-            timestamp: new Date().toISOString(),
-            event: 'after_findMatchingArticle',
-            output: metadata
-        }));
+        await logJson(
+            'after_findMatchingArticle',
+            'after',
+            'metadata',
+            'ArticleMetadata',
+            metadata
+        );
 
         // Log before processCriteriaMatches
-        logger.info(JSON.stringify({
-            timestamp: new Date().toISOString(),
-            event: 'before_processCriteriaMatches',
-            input: {
+        await logJson(
+            'before_processCriteriaMatches',
+            'before',
+            'headline_criteria_matches',
+            'object',
+            {
                 headline_criteria_matches: analysisItem.headline_criteria_matches,
                 citationCount: citationResult.citations.length
             }
-        }));
+        );
         const criteria_matches = processCriteriaMatches(
             analysisItem.headline_criteria_matches,
             citationResult
         );
-        // Log after processCriteriaMatches
-        logger.info(JSON.stringify({
-            timestamp: new Date().toISOString(),
-            event: 'after_processCriteriaMatches',
-            output: criteria_matches
-        }));
+        await logJson(
+            'after_processCriteriaMatches',
+            'after',
+            'criteria_matches',
+            'CriteriaMatch[]',
+            criteria_matches
+        );
 
         // Log before buildAnnotatedNewsItem
-        logger.info(JSON.stringify({
-            timestamp: new Date().toISOString(),
-            event: 'before_buildAnnotatedNewsItem',
-            input: { metadata, criteriaMatchesCount: criteria_matches.length }
-        }));
+        await logJson(
+            'before_buildAnnotatedNewsItem',
+            'before',
+            'metadataAndCriteriaMatches',
+            'object',
+            {
+                metadata,
+                criteriaMatchesCount: criteria_matches.length
+            }
+        );
         const result = buildAnnotatedNewsItem(metadata, criteria_matches);
-        // Log after buildAnnotatedNewsItem
-        logger.info(JSON.stringify({
-            timestamp: new Date().toISOString(),
-            event: 'after_buildAnnotatedNewsItem',
-            output: result
-        }));
+        await logJson(
+            'after_buildAnnotatedNewsItem',
+            'after',
+            'result',
+            'AnnotatedNewsItem',
+            result
+        );
 
         return result;
-    });
+    }));
 
     // Log before createCompleteAnalysis
-    logger.info(JSON.stringify({
-        timestamp: new Date().toISOString(),
-        event: 'before_createCompleteAnalysis',
-        input: { newsCount: news.length }
-    }));
+    await logJson(
+        'before_createCompleteAnalysis',
+        'before',
+        'newsCount',
+        'number',
+        news.length
+    );
     const finalResult = createCompleteAnalysis(news);
-    // Log after createCompleteAnalysis
-    logger.info(JSON.stringify({
-        timestamp: new Date().toISOString(),
-        event: 'after_createCompleteAnalysis',
-        output: finalResult
-    }));
+    await logJson(
+        'after_createCompleteAnalysis',
+        'after',
+        'finalResult',
+        'CompleteAnnotatedNews',
+        finalResult
+    );
 
     return finalResult;
 }
