@@ -284,7 +284,7 @@ async function main(): Promise<void> {
         // Generate markdown output including citations
         //
         logger.info("Rendering analysis with citations...");
-        const finalAnalysis = mergeArticlesWithAnalysis3(articles, sortedAnalysis, citationResult);
+        const finalAnalysis = await mergeArticlesWithAnalysis3(articles, sortedAnalysis, citationResult);
         await logJson('mergeArticlesWithAnalysis', 'finalAnalysis', finalAnalysis);
         await writeMarkdownFile(finalAnalysis);
         logger.success("Analysis rendered");
