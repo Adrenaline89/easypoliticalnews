@@ -180,6 +180,25 @@ export async function mergeArticlesWithAnalysis3(
     citationResult: SimpleCitationResult
 ): Promise<CompleteAnnotatedNews> {
     const news = await Promise.all(sortedAnalysis.results.map(async analysisItem => {
+        await logJson(
+            'inside_mergeArticlesWithAnalysis',
+            'before',
+            'citationResult',
+            'obj',
+            citationResult
+        );
+
+        await logJson(
+            'inside_mergeArticlesWithAnalysis',
+            'before',
+            'sortedAnalysis',
+            'obj',
+            sortedAnalysis
+        );
+
+
+
+        
         // Comment out logging before extractArticleTitle
         // await logJson(
         //     'before_extractArticleTitle',
