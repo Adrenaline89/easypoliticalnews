@@ -16,6 +16,9 @@ interface ArticleMetadata {
     publication: string;
 }
 
+// Type for headline criteria matches
+export type HeadlineCriteriaMatches = { [key: string]: string[] };
+
 /**
  * Step 1: Extract article title
  * Input: numberedTitle (e.g. "1. Article Title")
@@ -100,7 +103,7 @@ export function matchCriteriaWithCitations(
  * Affects: criteria_matches array in AnnotatedNewsItem
  * 
  * Input Types:
- * headline_criteria_matches: { [key: string]: string[] } | undefined
+ * headline_criteria_matches: HeadlineCriteriaMatches | undefined
  * citationResult: SimpleCitationResult { citations: { step: string; links: string[] }[] }
  * 
  * Output Type:
@@ -109,10 +112,19 @@ export function matchCriteriaWithCitations(
  *   criteria: CriteriaAndLink[];
  * }>
  */
-export function processCriteriaMatches(
-    headline_criteria_matches: { [key: string]: string[] } | undefined,
+export async function processCriteriaMatches(
+    headline_criteria_matches: HeadlineCriteriaMatches | undefined,
     citationResult: SimpleCitationResult
-): CriteriaMatch[] {
+): Promise<CriteriaMatch[]> {
+    // Keep logging for headline_criteria_matches
+    await logJson(
+        'inside_processCriteriaMatches',
+        'before',
+        'headline_criteria_matches',
+        'object',
+        headline_criteria_matches
+    );
+    
     if (!headline_criteria_matches) return [];
     
     return Object.entries(headline_criteria_matches)
@@ -168,41 +180,43 @@ export async function mergeArticlesWithAnalysis3(
     citationResult: SimpleCitationResult
 ): Promise<CompleteAnnotatedNews> {
     const news = await Promise.all(sortedAnalysis.results.map(async analysisItem => {
-        // Log before extractArticleTitle
-        await logJson(
-            'before_extractArticleTitle',
-            'before',
-            'numberedTitle',
-            'string',
-            analysisItem.numberedTitle
-        );
+        // Comment out logging before extractArticleTitle
+        // await logJson(
+        //     'before_extractArticleTitle',
+        //     'before',
+        //     'numberedTitle',
+        //     'string',
+        //     analysisItem.numberedTitle
+        // );
         const title = extractArticleTitle(analysisItem.numberedTitle);
-        await logJson(
-            'after_extractArticleTitle',
-            'after',
-            'title',
-            'string',
-            title
-        );
+        // Comment out logging after extractArticleTitle
+        // await logJson(
+        //     'after_extractArticleTitle',
+        //     'after',
+        //     'title',
+        //     'string',
+        //     title
+        // );
 
-        // Log findMatchingArticle
-        await logJson(
-            'before_findMatchingArticle',
-            'before',
-            'searchParams',
-            'object',
-            { title, articlesCount: articles.length }
-        );
+        // Comment out logging findMatchingArticle
+        // await logJson(
+        //     'before_findMatchingArticle',
+        //     'before',
+        //     'searchParams',
+        //     'object',
+        //     { title, articlesCount: articles.length }
+        // );
         const metadata = findMatchingArticle(title, articles);
-        await logJson(
-            'after_findMatchingArticle',
-            'after',
-            'metadata',
-            'ArticleMetadata',
-            metadata
-        );
+        // Comment out logging after findMatchingArticle
+        // await logJson(
+        //     'after_findMatchingArticle',
+        //     'after',
+        //     'metadata',
+        //     'ArticleMetadata',
+        //     metadata
+        // );
 
-        // Log before processCriteriaMatches
+        // Keep logging before processCriteriaMatches
         await logJson(
             'before_processCriteriaMatches',
             'before',
@@ -213,10 +227,11 @@ export async function mergeArticlesWithAnalysis3(
                 citationCount: citationResult.citations.length
             }
         );
-        const criteria_matches = processCriteriaMatches(
+        const criteria_matches = await processCriteriaMatches(
             analysisItem.headline_criteria_matches,
             citationResult
         );
+        // Keep logging after processCriteriaMatches
         await logJson(
             'after_processCriteriaMatches',
             'after',
@@ -225,45 +240,47 @@ export async function mergeArticlesWithAnalysis3(
             criteria_matches
         );
 
-        // Log before buildAnnotatedNewsItem
-        await logJson(
-            'before_buildAnnotatedNewsItem',
-            'before',
-            'metadataAndCriteriaMatches',
-            'object',
-            {
-                metadata,
-                criteriaMatchesCount: criteria_matches.length
-            }
-        );
+        // Comment out logging before buildAnnotatedNewsItem
+        // await logJson(
+        //     'before_buildAnnotatedNewsItem',
+        //     'before',
+        //     'metadataAndCriteriaMatches',
+        //     'object',
+        //     {
+        //         metadata,
+        //         criteriaMatchesCount: criteria_matches.length
+        //     }
+        // );
         const result = buildAnnotatedNewsItem(metadata, criteria_matches);
-        await logJson(
-            'after_buildAnnotatedNewsItem',
-            'after',
-            'result',
-            'AnnotatedNewsItem',
-            result
-        );
+        // Comment out logging after buildAnnotatedNewsItem
+        // await logJson(
+        //     'after_buildAnnotatedNewsItem',
+        //     'after',
+        //     'result',
+        //     'AnnotatedNewsItem',
+        //     result
+        // );
 
         return result;
     }));
 
-    // Log before createCompleteAnalysis
-    await logJson(
-        'before_createCompleteAnalysis',
-        'before',
-        'newsCount',
-        'number',
-        news.length
-    );
+    // Comment out logging before createCompleteAnalysis
+    // await logJson(
+    //     'before_createCompleteAnalysis',
+        //     'before',
+        //     'newsCount',
+        //     'number',
+        //     news.length
+        // );
     const finalResult = createCompleteAnalysis(news);
-    await logJson(
-        'after_createCompleteAnalysis',
-        'after',
-        'finalResult',
-        'CompleteAnnotatedNews',
-        finalResult
-    );
+    // Comment out logging after createCompleteAnalysis
+    // await logJson(
+        //     'after_createCompleteAnalysis',
+        //     'after',
+        //     'finalResult',
+        //     'CompleteAnnotatedNews',
+        //     finalResult
+        // );
 
     return finalResult;
 }
