@@ -219,10 +219,9 @@ export function sortAnalysisByMatches(news: AnnotatedNews): AnnotatedNews {
                     : result.numberedTitle
             }))
             .sort((a, b) => {
-                const aTotal = Object.values(a.headline_criteria_matches || {})
-                    .reduce((sum, arr) => sum + arr.length, 0);
-                const bTotal = Object.values(b.headline_criteria_matches || {})
-                    .reduce((sum, arr) => sum + arr.length, 0);
+                // Count the number of steps in each headline criteria match
+                const aTotal = a.headline_criteria_matches?.steps?.length || 0;
+                const bTotal = b.headline_criteria_matches?.steps?.length || 0;
                 return bTotal - aTotal;
             })
     };

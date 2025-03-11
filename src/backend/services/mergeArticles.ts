@@ -16,8 +16,11 @@ interface ArticleMetadata {
     publication: string;
 }
 
-// Type for headline criteria matches
-export type HeadlineCriteriaMatches = { [key: string]: string[] };
+// Type for headline criteria matches - updated to match new structure
+export interface HeadlineCriteriaMatches {
+    inspiration: string;
+    steps: string[];
+}
 
 /**
  * Step 1: Extract article title
@@ -116,7 +119,7 @@ export async function processCriteriaMatches(
     headline_criteria_matches: HeadlineCriteriaMatches | undefined,
     citationResult: SimpleCitationResult
 ): Promise<CriteriaMatch[]> {
-    // Keep logging for headline_criteria_matches
+    // Log the headline_criteria_matches variable
     await logJson(
         'inside_processCriteriaMatches',
         'before',
@@ -127,10 +130,13 @@ export async function processCriteriaMatches(
     
     if (!headline_criteria_matches) return [];
     
-    return Object.entries(headline_criteria_matches)
-        .map(([source, criteria]) => 
-            matchCriteriaWithCitations(criteria, source, citationResult)
-        );
+    // Get the source from inspiration field
+    const source = headline_criteria_matches.inspiration;
+    // Extract criteria steps
+    const criteria = headline_criteria_matches.steps || [];
+    
+    // Return a single criteria match with all steps for this source
+    return [matchCriteriaWithCitations(criteria, source, citationResult)];
 }
 
 /**
