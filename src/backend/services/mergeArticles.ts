@@ -1,4 +1,13 @@
-import { NewsArticle, AnnotatedNews, CitationStep, CompleteAnnotatedNews, CriteriaMatch, CriteriaMatchesMap } from '../types';
+import { NewsArticle, AnnotatedNews, CitationStep, CompleteAnnotatedNews } from '../types';
+
+// Define CriteriaMatch interface locally since we're modifying its structure
+interface CriteriaMatch {
+    source: CitationStep | 'citations';
+    criteria_list: {
+        step_name: string;
+        url: string;
+    }[];
+}
 import { SimpleCitationResult } from './citations';
 import { logger, logJson } from './logger';  // Add this import
 
@@ -16,9 +25,10 @@ interface ArticleMetadata {
     publication: string;
 }
 
-// Import CriteriaMatchesMap directly from types.ts instead of redefining
-// This ensures we use the same type definition everywhere
-export type HeadlineCriteriaMatches = CriteriaMatchesMap;
+// Define HeadlineCriteriaMatches interface locally instead of importing
+export interface HeadlineCriteriaMatches {
+    [key: string]: string[];
+}
 
 /**
  * Step 1: Extract article title
@@ -89,9 +99,9 @@ export function matchCriteriaWithCitations(
 ): CriteriaMatch {
     const matchingCitation = citations.citations.find(c => c.step === source);
     return {
-        source: source as CitationStep,
-        criteria: criteria.map(c => ({
-            criteria_name: c,
+        source: source as CitationStep | 'citations',
+        criteria_list: criteria.map(c => ({
+            step_name: c,
             url: matchingCitation?.links[0] || ''
         }))
     };
@@ -131,7 +141,12 @@ export async function processCriteriaMatches(
     // Process the criteria matches in the format { [source]: string[] }
     return Object.entries(headline_criteria_matches)
         .map(([source, criteria]) => 
-            matchCriteriaWithCitations(criteria, source, citationResult)
+            // Ensure criteria is always a string array
+            matchCriteriaWithCitations(
+                Array.isArray(criteria) ? criteria : [], 
+                source, 
+                citationResult
+            )
         );
 }
 

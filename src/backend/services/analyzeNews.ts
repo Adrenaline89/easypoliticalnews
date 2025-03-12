@@ -116,7 +116,7 @@ export function mergeArticlesWithAnalysis2(
             
             // Create CriteriaAndLink with URL if available
             return {
-              criteria_name: criteriaText,
+              step_name: criteriaText,
               url: matchingCitation && matchingCitation.links.length > 0 ? 
                    matchingCitation.links[0] : ''
             };
@@ -125,7 +125,7 @@ export function mergeArticlesWithAnalysis2(
           // STEP 8: Add new CriteriaMatch entry with source and criteria
           criteria_matches.push({
             source: source as CitationStep, // Type assertion to match required type
-            criteria: criteriaWithLinks
+            criteria_list: criteriaWithLinks
           });
         });
       }
@@ -182,8 +182,8 @@ export function mergeArticlesWithAnalysis(
 
             return [{
                 source: source as CitationStep,
-                criteria: criteriaList.map(criteria => ({
-                    criteria_name: criteria,
+                criteria_list: criteriaList.map(criteria => ({
+                    step_name: criteria,
                     url: matchingCitation.links[0] || ''
                 }))
             }];
