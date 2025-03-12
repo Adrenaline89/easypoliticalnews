@@ -1,4 +1,4 @@
-import { NewsArticle, AnnotatedNews, CitationStep, CompleteAnnotatedNews, CriteriaMatch } from '../types';
+import { NewsArticle, AnnotatedNews, CitationStep, CompleteAnnotatedNews, CriteriaMatch, CriteriaMatchesMap } from '../types';
 import { SimpleCitationResult } from './citations';
 import { logger, logJson } from './logger';  // Add this import
 
@@ -16,11 +16,9 @@ interface ArticleMetadata {
     publication: string;
 }
 
-// Type for headline criteria matches - updated to match new structure
-export interface HeadlineCriteriaMatches {
-    inspiration: string;
-    steps: string[];
-}
+// Import CriteriaMatchesMap directly from types.ts instead of redefining
+// This ensures we use the same type definition everywhere
+export type HeadlineCriteriaMatches = CriteriaMatchesMap;
 
 /**
  * Step 1: Extract article title
@@ -130,13 +128,11 @@ export async function processCriteriaMatches(
     
     if (!headline_criteria_matches) return [];
     
-    // Get the source from inspiration field
-    const source = headline_criteria_matches.inspiration;
-    // Extract criteria steps
-    const criteria = headline_criteria_matches.steps || [];
-    
-    // Return a single criteria match with all steps for this source
-    return [matchCriteriaWithCitations(criteria, source, citationResult)];
+    // Process the criteria matches in the format { [source]: string[] }
+    return Object.entries(headline_criteria_matches)
+        .map(([source, criteria]) => 
+            matchCriteriaWithCitations(criteria, source, citationResult)
+        );
 }
 
 /**
